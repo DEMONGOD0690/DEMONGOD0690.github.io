@@ -194,8 +194,40 @@
         <span id="bestLabel">BEST</span><span id="bestDisplay">0</span>
       </div>
     </div>
-
     <canvas id="c"></canvas>
+    <div
+      style="
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+      "
+    >
+      <button
+        id="apBtn"
+        style="
+          font-family: &quot;Orbitron&quot;, monospace;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 3px;
+          color: #000;
+          background: #0ff;
+          border: none;
+          padding: 10px 28px;
+          cursor: pointer;
+          clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+          box-shadow:
+            0 0 20px #0ff,
+            0 0 40px #0ff;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          display: none;
+        "
+      >
+        ⚡ AUTO PILOT
+      </button>
+    </div>
 
     <div id="overlay">
       <div class="title-text">NEON PARKOUR</div>
@@ -220,6 +252,11 @@
       const bestDisplay = document.getElementById("bestDisplay");
       const bestLabel = document.getElementById("bestLabel");
       const resetBtn = document.getElementById("resetBtn");
+      const apBtn = document.getElementById("apBtn");
+      apBtn.addEventListener("click", toggleAutoPilot);
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "KeyP") toggleAutoPilot();
+      });
 
       // ── Persistent best ───────────────────────────────────────────────────────────
       let best = parseInt(localStorage.getItem("neonParkourBest") || "0");
@@ -347,7 +384,7 @@
         },
 
         update() {
-          // Auto-run forward
+          // Auto-run forward (disabled in autopilot — platforms move instead)
           const runSpeed = 4.5 + Math.min(score * 0.03, 5);
           this.vx = runSpeed;
 
@@ -693,8 +730,8 @@
         arenaMsg = `RUN RESUMES IN ${secs}...`;
 
         if (arenaResumeTimer <= 0) {
-          // Rebuild world ahead from player position, reset score progress, resume run
-          score = 0;
+          // Rebuild world ahead from player position — score keeps climbing, just advance the next fight threshold
+          nextFightAt += ENEMY_THRESHOLD;
           const resumePlat = {
             x: ap.x,
             y: ap.y,
@@ -715,15 +752,19 @@
         }
       }
 
-      const ENEMY_THRESHOLD = 30; // platforms before enemy spawns
+      const ENEMY_THRESHOLD = 25;
+      let nextFightAt = ENEMY_THRESHOLD;
       function drawProgressBar() {
         if (state !== "playing") return;
         const barW = W * 0.5;
         const barH = 10;
         const barX = W * 0.25;
         const barY = 14;
-        const prog = Math.min(score / ENEMY_THRESHOLD, 1);
-        const enemyActive = enemies.length > 0 || score >= ENEMY_THRESHOLD;
+        const prog = Math.min(
+          (score - (nextFightAt - ENEMY_THRESHOLD)) / ENEMY_THRESHOLD,
+          1,
+        );
+        const enemyActive = enemies.length > 0 || score >= nextFightAt;
 
         // Background track
         ctx.save();
@@ -772,7 +813,7 @@
           ctx.font = "9px Share Tech Mono, monospace";
           ctx.fillStyle = "#0ff";
           ctx.fillText(
-            `${ENEMY_THRESHOLD - score} TO ENEMY`,
+            `${nextFightAt - score} TO ENEMY`,
             barX + barW + 8,
             barY + barH,
           );
@@ -916,7 +957,7 @@
         // Trigger arena when threshold hit (only during normal playing state)
         if (
           state === "playing" &&
-          score >= ENEMY_THRESHOLD &&
+          score >= nextFightAt &&
           enemies.length === 0 &&
           !enemySpawnLock
         ) {
@@ -1286,6 +1327,7 @@
         bullets = [];
         eBullets = [];
         enemySpawnLock = false;
+        nextFightAt = ENEMY_THRESHOLD;
         shootCooldown = 0;
         arenaPlatform = null;
         arenaMsg = "";
@@ -1299,6 +1341,13 @@
         camX = P.x - W * 0.28;
         camY = P.y - H * 0.42;
         overlay.classList.add("hidden");
+        apBtn.style.display = "block";
+        autoPilot = false;
+        railReset();
+        P.maxJumps = 2;
+        apBtn.textContent = "⚡ AUTO PILOT";
+        apBtn.style.background = "#0ff";
+        apBtn.style.boxShadow = "0 0 20px #0ff,0 0 40px #0ff";
       }
 
       function die() {
@@ -1313,6 +1362,10 @@
         )
           return;
         state = "dead";
+        autoPilot = false;
+        railReset();
+        P.maxJumps = 2;
+        apBtn.style.display = "none";
         const isNew = score > best;
         if (isNew) saveBest(score);
         updateBestUI(isNew);
@@ -1326,6 +1379,185 @@
             : `CLEARED: ${score} PLATFORMS &nbsp;·&nbsp; BEST: ${best}`;
           startBtn.textContent = "RUN AGAIN";
         }, 1000);
+      }
+
+      // ── Autopilot (Waypoint Rail System) ─────────────────────────────────────────
+      let autoPilot = false;
+
+      // Rail state
+      let rail = {
+        active: false,
+        fromX: 0,
+        fromY: 0, // start of current arc
+        toX: 0,
+        toY: 0, // end of current arc (centre of next platform)
+        t: 0, // progress 0→1
+        duration: 1, // frames for this arc
+        arcH: 0, // peak height of arc
+        onPlat: null, // platform we're currently sitting on
+      };
+
+      function railReset() {
+        rail.active = false;
+        rail.t = 0;
+        rail.onPlat = null;
+      }
+
+      function railFindCurrent() {
+        return platforms.find(
+          (p) =>
+            P.x + P.w > p.x + 4 &&
+            P.x < p.x + p.w - 4 &&
+            Math.abs(P.y + P.h - p.y) < 10,
+        );
+      }
+
+      function railFindNext(cur) {
+        return platforms
+          .filter((p) => p.x > cur.x + cur.w - 2)
+          .sort((a, b) => a.x - b.x)[0];
+      }
+
+      function railStartArc(cur, next) {
+        const runSpeed = 4.5 + Math.min(score * 0.03, 5);
+        // From: centre of current platform top
+        rail.fromX = cur.x + cur.w / 2 - P.w / 2;
+        rail.fromY = cur.y - P.h;
+        // To: centre of next platform top
+        rail.toX = next.x + next.w / 2 - P.w / 2;
+        rail.toY = next.y - P.h;
+        // Duration: how long it would take to cross at run speed
+        const dist = Math.abs(rail.toX - rail.fromX);
+        rail.duration = Math.max(20, Math.round(dist / runSpeed));
+        // Arc height: enough to clear the gap, scales with height difference
+        const heightDiff = rail.fromY - rail.toY; // positive = going up
+        rail.arcH = Math.max(60, dist * 0.3 + Math.max(0, heightDiff) + 40);
+        rail.t = 0;
+        rail.active = true;
+        rail.onPlat = null;
+        spawnJumpFX(P.x + P.w / 2, P.y + P.h);
+      }
+
+      function updateRail() {
+        if (!rail.active) {
+          // Sitting on platform — find current and prepare next arc
+          const cur = railFindCurrent();
+          if (!cur) {
+            // Lost footing — snap to nearest platform above player
+            const rescue = platforms
+              .filter(
+                (p) =>
+                  p.y <= P.y + P.h + 200 && p.x < P.x + P.w && p.x + p.w > P.x,
+              )
+              .sort((a, b) => Math.abs(a.y - P.y) - Math.abs(b.y - P.y))[0];
+            if (rescue) {
+              P.x = rescue.x + rescue.w / 2 - P.w / 2;
+              P.y = rescue.y - P.h;
+            }
+            return;
+          }
+
+          const next = railFindNext(cur);
+          if (!next) return;
+
+          // Glue to current platform while waiting
+          P.x += 4.5 + Math.min(score * 0.03, 5); // keep moving forward on platform
+          P.y = cur.y - P.h;
+          P.onGround = true;
+          P.vy = 0;
+          P.jumps = 0;
+
+          // Score this platform
+          if (!cur.scored) {
+            cur.scored = true;
+            score++;
+          }
+
+          // Launch arc when player reaches 60% across the platform
+          const progress = (P.x - cur.x) / cur.w;
+          if (progress >= 0.6) {
+            railStartArc(cur, next);
+          }
+          return;
+        }
+
+        // ── Arc in progress ──
+        rail.t += 1 / rail.duration;
+        if (rail.t >= 1) rail.t = 1;
+
+        const t = rail.t;
+        // Horizontal: ease in-out
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        P.x = rail.fromX + (rail.toX - rail.fromX) * ease;
+
+        // Vertical: parabola — peaks at t=0.5, lands exactly at toY
+        const dy = rail.toY - rail.fromY;
+        P.y = rail.fromY + dy * t - rail.arcH * 4 * t * (1 - t);
+
+        P.onGround = false;
+        P.vy = 0;
+        P.vx = 0;
+
+        // Arrived at destination
+        if (rail.t >= 1) {
+          P.x = rail.toX;
+          P.y = rail.toY;
+          P.onGround = true;
+          P.vy = 0;
+          P.jumps = 0;
+          rail.active = false;
+          spawnJumpFX(P.x + P.w / 2, P.y + P.h);
+          // Score destination platform
+          const landed = railFindCurrent();
+          if (landed && !landed.scored) {
+            landed.scored = true;
+            score++;
+          }
+        }
+
+        // Trail
+        P.trail.unshift({ x: P.x + P.w / 2, y: P.y + P.h / 2, age: 0 });
+        if (P.trail.length > 18) P.trail.pop();
+        P.trail.forEach((t2) => t2.age++);
+      }
+
+      // ── Auto-fight (used during arena_fight when autopilot on) ────────────────────
+      function updateAutoFight() {
+        if (enemies.length === 0) return;
+        const e = enemies[0];
+        // Aim at enemy
+        mx = e.wx - camX + e.w / 2;
+        my = e.wy - camY + e.h / 2;
+        shoot();
+        // Dodge bullets by jumping
+        if (P.onGround) {
+          for (const b of eBullets) {
+            if (
+              Math.abs(b.wx - (P.x + P.w / 2)) < 100 &&
+              b.wy > P.y - 80 &&
+              b.wy < P.y + P.h
+            ) {
+              P.jump();
+              break;
+            }
+          }
+          if (frame % 100 === 0) P.jump(); // periodic jump to dodge
+        }
+      }
+
+      // ── Toggle autopilot ──────────────────────────────────────────────────────────
+      function toggleAutoPilot() {
+        autoPilot = !autoPilot;
+        if (!autoPilot) {
+          railReset();
+          P.maxJumps = 2;
+        }
+        apBtn.textContent = autoPilot ? "✋ MANUAL" : "⚡ AUTO PILOT";
+        apBtn.style.background = autoPilot ? "#ff0080" : "#0ff";
+        apBtn.style.boxShadow = autoPilot
+          ? "0 0 20px #ff0080,0 0 40px #ff0080"
+          : "0 0 20px #0ff,0 0 40px #0ff";
+        apBtn.style.color = "#000";
       }
 
       // ── Main loop ─────────────────────────────────────────────────────────────────
@@ -1348,7 +1580,11 @@
 
         if (state === "playing") {
           generatePlatforms();
-          P.update();
+          if (autoPilot) {
+            updateRail();
+          } else {
+            P.update();
+          }
           updateCamera();
           updateParticles();
           updateVoidFog();
@@ -1356,19 +1592,24 @@
           updateEBullets();
           updateEnemies();
 
-          // Score = cumulative platforms cleared (count newly passed ones each frame)
-          const newlyCleared = platforms.filter(
-            (p) => p.x + p.w < P.x && !p.counted,
-          );
-          newlyCleared.forEach((p) => {
-            p.counted = true;
-            score++;
-          });
+          // Score = platforms player has landed on (not just passed)
+          if (P.onGround) {
+            const standingOn = platforms.find(
+              (p) =>
+                P.x + P.w > p.x + 2 &&
+                P.x < p.x + p.w - 2 &&
+                Math.abs(P.y + P.h - p.y) < 6,
+            );
+            if (standingOn && !standingOn.scored) {
+              standingOn.scored = true;
+              score++;
+            }
+          }
           scoreDisplay.textContent = score;
           jumpDisplay.textContent = Math.max(0, P.maxJumps - P.jumps);
 
-          // Void death: fall off bottom of viewport
-          if (P.y - camY > H + 80) {
+          // Void death: fall off bottom of viewport (disabled in autopilot)
+          if (!autoPilot && P.y - camY > H + 80) {
             spawnVoidFX(P.x + P.w / 2, P.y);
             die();
           }
@@ -1399,6 +1640,7 @@
           drawArenaMsg();
           scoreDisplay.textContent = score;
         } else if (state === "arena_fight") {
+          if (autoPilot) updateAutoFight();
           updateArenaFight();
           updateCamera();
           updateParticles();
