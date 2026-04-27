@@ -1789,6 +1789,24 @@
       const db = getFirestore(app);
 
       console.log("Firebase + Firestore connected");
+      import {
+        collection,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+      async function testSave() {
+        try {
+          await addDoc(collection(db, "scores"), {
+            name: "Test",
+            score: 10,
+          });
+          console.log("SAVED SUCCESSFULLY ✅");
+        } catch (error) {
+          console.log("ERROR ❌", error);
+        }
+      }
+
+      testSave();
     </script>
   </body>
 </html>
