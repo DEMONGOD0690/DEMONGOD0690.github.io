@@ -182,6 +182,225 @@
       #bestLabel {
         transition: color 0.3s;
       }
+
+      /* ── Homepage ── */
+      .screen {
+        position: fixed;
+        inset: 0;
+        z-index: 25;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 8, 0.96);
+        font-family: "Orbitron", monospace;
+      }
+      .screen.hidden {
+        display: none;
+      }
+
+      .hp-title {
+        font-size: clamp(36px, 8vw, 80px);
+        font-weight: 900;
+        letter-spacing: 10px;
+        color: #fff;
+        text-shadow:
+          0 0 20px #0ff,
+          0 0 60px #0ff,
+          0 0 120px #0af;
+        animation: pulse 2.5s ease-in-out infinite;
+        margin-bottom: 6px;
+      }
+      .hp-sub {
+        font-family: "Share Tech Mono", monospace;
+        font-size: clamp(10px, 2vw, 14px);
+        color: #0ff;
+        letter-spacing: 5px;
+        opacity: 0.6;
+        margin-bottom: 56px;
+      }
+      .hp-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+      }
+      .hp-btn {
+        font-family: "Orbitron", monospace;
+        font-size: clamp(13px, 2vw, 16px);
+        font-weight: 700;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        width: clamp(220px, 40vw, 340px);
+        padding: 16px 0;
+        clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .hp-btn-play {
+        background: #0ff;
+        color: #000;
+        box-shadow:
+          0 0 30px #0ff,
+          0 0 60px #0ff5;
+      }
+      .hp-btn-shop {
+        background: transparent;
+        color: #ff0080;
+        border: 2px solid #ff0080;
+        box-shadow: 0 0 20px #ff00802a;
+      }
+      .hp-btn-skill {
+        background: transparent;
+        color: #ffd700;
+        border: 2px solid #ffd700;
+        box-shadow: 0 0 20px #ffd7002a;
+      }
+      .hp-btn-play:hover {
+        background: #fff;
+        transform: scale(1.04);
+        box-shadow: 0 0 50px #0ff;
+      }
+      .hp-btn-shop:hover {
+        background: #ff008018;
+        transform: scale(1.04);
+        box-shadow: 0 0 30px #ff0080;
+      }
+      .hp-btn-skill:hover {
+        background: #ffd70018;
+        transform: scale(1.04);
+        box-shadow: 0 0 30px #ffd700;
+      }
+      .hp-coin-bar {
+        position: absolute;
+        bottom: 28px;
+        font-family: "Share Tech Mono", monospace;
+        font-size: 13px;
+        color: #ffd700;
+        letter-spacing: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-shadow: 0 0 10px #ffd700;
+      }
+
+      /* ── Shop & Skill screens ── */
+      .page-title {
+        font-size: clamp(22px, 5vw, 42px);
+        font-weight: 900;
+        letter-spacing: 8px;
+        margin-bottom: 8px;
+      }
+      .page-sub {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 3px;
+        opacity: 0.5;
+        margin-bottom: 36px;
+      }
+      .back-btn {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: #0ff;
+        background: transparent;
+        border: 1px solid #0ff4;
+        padding: 7px 20px;
+        cursor: pointer;
+        margin-top: 32px;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+      .back-btn:hover {
+        border-color: #0ff;
+        box-shadow: 0 0 12px #0ff4;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        width: min(700px, 90vw);
+        max-height: 55vh;
+        overflow-y: auto;
+        padding: 4px 2px;
+      }
+      .grid::-webkit-scrollbar {
+        width: 4px;
+      }
+      .grid::-webkit-scrollbar-thumb {
+        background: #0ff3;
+        border-radius: 2px;
+      }
+      .item-card {
+        background: #06101e;
+        border: 1px solid #0ff2;
+        border-radius: 6px;
+        padding: 18px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        font-family: "Share Tech Mono", monospace;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+        position: relative;
+      }
+      .item-card:hover {
+        border-color: #0ff;
+        box-shadow: 0 0 14px #0ff3;
+      }
+      .item-card.locked {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .item-card.locked:hover {
+        border-color: #0ff2;
+        box-shadow: none;
+      }
+      .item-icon {
+        font-size: 32px;
+      }
+      .item-name {
+        font-size: 11px;
+        color: #fff;
+        letter-spacing: 2px;
+        text-align: center;
+      }
+      .item-desc {
+        font-size: 9px;
+        color: #0ff8;
+        letter-spacing: 1px;
+        text-align: center;
+        line-height: 1.5;
+      }
+      .item-cost {
+        font-size: 11px;
+        color: #ffd700;
+        letter-spacing: 1px;
+        margin-top: 2px;
+      }
+      .item-owned {
+        font-size: 10px;
+        color: #0f0;
+        letter-spacing: 1px;
+      }
+      .item-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: #ff0080;
+        font-size: 9px;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 3px;
+        letter-spacing: 1px;
+      }
     </style>
   </head>
   <body>
@@ -465,6 +684,47 @@
       </div>
     </div>
 
+    <!-- ── Homepage ── -->
+    <div id="homepage" class="screen hidden">
+      <div class="hp-title">NEON PARKOUR</div>
+      <div class="hp-sub">CYBERPUNK SURVIVAL</div>
+      <nav class="hp-nav">
+        <button class="hp-btn hp-btn-play" id="hpPlay">▶ PLAY</button>
+        <button class="hp-btn hp-btn-shop" id="hpShop">🛒 SHOP</button>
+        <button class="hp-btn hp-btn-skill" id="hpSkill">⚡ SKILLS</button>
+      </nav>
+      <div class="hp-coin-bar">
+        <span style="font-size: 18px">🪙</span>
+        <span id="hpCoinCount">0</span> COINS
+      </div>
+    </div>
+
+    <!-- ── Shop screen ── -->
+    <div id="shopScreen" class="screen hidden">
+      <div
+        class="page-title"
+        style="color: #ff0080; text-shadow: 0 0 20px #ff0080"
+      >
+        SHOP
+      </div>
+      <div class="page-sub">SPEND YOUR COINS</div>
+      <div class="grid" id="shopGrid"></div>
+      <button class="back-btn" id="shopBack">← BACK</button>
+    </div>
+
+    <!-- ── Skill screen ── -->
+    <div id="skillScreen" class="screen hidden">
+      <div
+        class="page-title"
+        style="color: #ffd700; text-shadow: 0 0 20px #ffd700"
+      >
+        SKILLS
+      </div>
+      <div class="page-sub">UNLOCK ABILITIES</div>
+      <div class="grid" id="skillGrid"></div>
+      <button class="back-btn" id="skillBack">← BACK</button>
+    </div>
+
     <div id="overlay">
       <div class="title-text">NEON PARKOUR</div>
       <div class="sub-text">JUMP OR FALL INTO THE VOID</div>
@@ -474,7 +734,30 @@
         SPACE / CLICK TO JUMP &nbsp;·&nbsp; DOUBLE JUMP &nbsp;·&nbsp; F /
         RIGHT-CLICK TO SHOOT
       </div>
-      <button id="resetBtn">⟳ RESET BEST</button>
+      <div
+        style="display: flex; gap: 12px; margin-top: 10px; pointer-events: all"
+      >
+        <button id="resetBtn">⟳ RESET BEST</button>
+        <button
+          id="homeBtn"
+          style="
+            font-family: &quot;Share Tech Mono&quot;, monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #0ff;
+            background: transparent;
+            border: 1px solid #0ff4;
+            padding: 5px 14px;
+            cursor: pointer;
+            pointer-events: all;
+            opacity: 0.55;
+            transition: opacity 0.2s;
+            text-transform: uppercase;
+          "
+        >
+          ⌂ HOME
+        </button>
+      </div>
     </div>
 
     <!-- ── Firebase ── -->
@@ -822,18 +1105,15 @@
         const user = e.detail;
         currentUser = user;
         if (user) {
-          // Hide login screen, show game
           document.getElementById("loginScreen").style.display = "none";
-          // Update user badge
           document.getElementById("userAvatar").src = user.photoURL || "";
           document.getElementById("userName").textContent =
             user.displayName || user.email;
           document.getElementById("userName").style.color = "#0ff";
           document.getElementById("userAvatar").style.display = "block";
-          document.getElementById("userBadge").style.display = "none"; // shown only on death
-          // Load cloud data
+          document.getElementById("userBadge").style.display = "none";
           await loadCloudData();
-          // Start the game loop if not running
+          showScreen("homepage");
           if (!window._loopStarted) {
             window._loopStarted = true;
             buildWorld();
@@ -874,8 +1154,8 @@
         document.getElementById("userAvatar").style.display = "none";
         document.getElementById("userName").textContent = "👤 GUEST";
         document.getElementById("userName").style.color = "#ff6600";
-        document.getElementById("userBadge").style.display = "none"; // hidden until death
-        // Start game
+        document.getElementById("userBadge").style.display = "none";
+        // Start game loop then show homepage
         if (!window._loopStarted) {
           window._loopStarted = true;
           buildWorld();
@@ -885,6 +1165,7 @@
           updateCoinUI();
           loop();
         }
+        showScreen("homepage");
       });
 
       // ── Sign out (works for both Google and Guest) ────────────────────────────────
@@ -1031,8 +1312,11 @@
 
         jump() {
           if (this.jumps < this.maxJumps) {
-            // Second jump is weaker than the first
-            this.vy = this.jumps === 0 ? JUMP_V : JUMP_V * 0.65;
+            const boost = window._skillJumpBoost || 0;
+            this.vy =
+              this.jumps === 0
+                ? JUMP_V * (1 + boost)
+                : JUMP_V * 0.65 * (1 + boost);
             this.jumps++;
             spawnJumpFX(this.x + this.w / 2, this.y + this.h);
           }
@@ -1041,7 +1325,8 @@
         update() {
           // Auto-run forward (disabled in autopilot — platforms move instead)
           const runSpeed =
-            (4.5 + Math.min(score * 0.03, 5)) * (autoPilot ? apSpeedMult : 1);
+            (4.5 + Math.min(score * 0.03, 5) + (window._skillSpeedBoost || 0)) *
+            (autoPilot ? apSpeedMult : 1);
           this.vx = runSpeed;
 
           this.vy = Math.min(this.vy + GRAVITY, 22); // cap fall speed
@@ -1226,14 +1511,294 @@
 
       function updateCoinUI() {
         document.getElementById("coinDisplay").textContent = coinStash;
+        const hpCC = document.getElementById("hpCoinCount");
+        if (hpCC) hpCC.textContent = coinStash;
       }
+
+      // ── Homepage navigation ───────────────────────────────────────────────────────
+
+      function showScreen(id) {
+        ["homepage", "shopScreen", "skillScreen"].forEach((sid) => {
+          const el = document.getElementById(sid);
+          if (el) el.classList.add("hidden");
+        });
+        const target = document.getElementById(id);
+        if (target) target.classList.remove("hidden");
+        if (id === "shopScreen") renderShop();
+        if (id === "skillScreen") renderSkills();
+        // Update coin bar on homepage
+        const hpCC = document.getElementById("hpCoinCount");
+        if (hpCC) hpCC.textContent = coinStash;
+      }
+
+      document.getElementById("hpPlay").addEventListener("click", () => {
+        document.getElementById("homepage").classList.add("hidden");
+        overlay.classList.remove("hidden");
+      });
+      document
+        .getElementById("hpShop")
+        .addEventListener("click", () => showScreen("shopScreen"));
+      document
+        .getElementById("hpSkill")
+        .addEventListener("click", () => showScreen("skillScreen"));
+      document
+        .getElementById("shopBack")
+        .addEventListener("click", () => showScreen("homepage"));
+      document
+        .getElementById("skillBack")
+        .addEventListener("click", () => showScreen("homepage"));
+      document.getElementById("homeBtn").addEventListener("click", () => {
+        overlay.classList.add("hidden");
+        document.getElementById("userBadge").style.display = "none";
+        showScreen("homepage");
+      });
+
+      // ── Shop items ────────────────────────────────────────────────────────────────
+      const SHOP_ITEMS = [
+        {
+          id: "trail_pink",
+          icon: "💜",
+          name: "PINK TRAIL",
+          desc: "Swap trail color\nto hot pink",
+          cost: 15,
+          type: "cosmetic",
+        },
+        {
+          id: "trail_gold",
+          icon: "💛",
+          name: "GOLD TRAIL",
+          desc: "Swap trail color\nto gold",
+          cost: 25,
+          type: "cosmetic",
+        },
+        {
+          id: "trail_green",
+          icon: "💚",
+          name: "GREEN TRAIL",
+          desc: "Swap trail color\nto matrix green",
+          cost: 20,
+          type: "cosmetic",
+        },
+        {
+          id: "shield",
+          icon: "🛡",
+          name: "SHIELD",
+          desc: "One free hit\nbefore you die",
+          cost: 50,
+          type: "powerup",
+          badge: "HOT",
+        },
+        {
+          id: "coin_mag",
+          icon: "🧲",
+          name: "COIN MAGNET",
+          desc: "Coins pulled\nfrom 80px away",
+          cost: 40,
+          type: "powerup",
+        },
+        {
+          id: "slow_mo",
+          icon: "⏳",
+          name: "SLOW MOTION",
+          desc: "Halves game speed\nfor 10 seconds",
+          cost: 35,
+          type: "powerup",
+          badge: "NEW",
+        },
+        {
+          id: "double_coin",
+          icon: "✖️",
+          name: "DOUBLE COINS",
+          desc: "2x coins for\none full run",
+          cost: 30,
+          type: "powerup",
+        },
+        {
+          id: "extra_jump",
+          icon: "🦘",
+          name: "TRIPLE JUMP",
+          desc: "Adds a 3rd jump\nfor one run",
+          cost: 45,
+          type: "powerup",
+        },
+      ];
+
+      let ownedItems = JSON.parse(localStorage.getItem("neonOwned") || "[]");
+      function saveOwned() {
+        localStorage.setItem("neonOwned", JSON.stringify(ownedItems));
+      }
+
+      function renderShop() {
+        const grid = document.getElementById("shopGrid");
+        grid.innerHTML = "";
+        // Update coin count shown in shop header
+        const hpCC = document.getElementById("hpCoinCount");
+        if (hpCC) hpCC.textContent = coinStash;
+
+        SHOP_ITEMS.forEach((item) => {
+          const owned = ownedItems.includes(item.id);
+          const card = document.createElement("div");
+          card.className = "item-card" + (owned ? "" : "");
+          card.innerHTML = `
+      ${item.badge ? `<div class="item-badge">${item.badge}</div>` : ""}
+      <div class="item-icon">${item.icon}</div>
+      <div class="item-name">${item.name}</div>
+      <div class="item-desc">${item.desc.replace(/\n/g, "<br>")}</div>
+      ${
+        owned
+          ? `<div class="item-owned">✔ OWNED</div>`
+          : `<div class="item-cost">🪙 ${item.cost}</div>`
+      }
+    `;
+          if (!owned) {
+            card.addEventListener("click", () => {
+              if (coinStash < item.cost) {
+                card.style.borderColor = "#f60";
+                setTimeout(() => (card.style.borderColor = ""), 600);
+                return;
+              }
+              coinStash -= item.cost;
+              saveCoinStash();
+              updateCoinUI();
+              ownedItems.push(item.id);
+              saveOwned();
+              renderShop();
+            });
+          }
+          grid.appendChild(card);
+        });
+      }
+
+      // ── Skill items ───────────────────────────────────────────────────────────────
+      const SKILL_ITEMS = [
+        {
+          id: "sk_highjump",
+          icon: "🚀",
+          name: "HIGH JUMP",
+          desc: "Jump 20% higher\n(permanent)",
+          cost: 30,
+          req: null,
+        },
+        {
+          id: "sk_speedboost",
+          icon: "⚡",
+          name: "SPEED BOOST",
+          desc: "+0.5 base run\nspeed (permanent)",
+          cost: 40,
+          req: null,
+        },
+        {
+          id: "sk_coinluck",
+          icon: "🍀",
+          name: "COIN LUCK",
+          desc: "Coin spawn chance\n20% → 35%",
+          cost: 35,
+          req: null,
+        },
+        {
+          id: "sk_enemyhp",
+          icon: "⚔️",
+          name: "SHARP SHOTS",
+          desc: "Enemy needs only\n3 hits to kill",
+          cost: 50,
+          req: "sk_highjump",
+          badge: "REQ: HIGH JUMP",
+        },
+        {
+          id: "sk_revive",
+          icon: "💀",
+          name: "LAST STAND",
+          desc: "Auto-revive once\nper run",
+          cost: 80,
+          req: "sk_speedboost",
+          badge: "REQ: SPEED BOOST",
+        },
+        {
+          id: "sk_autoaim",
+          icon: "🎯",
+          name: "AUTO AIM",
+          desc: "Bullets track\nenemy automatically",
+          cost: 60,
+          req: null,
+        },
+      ];
+
+      let ownedSkills = JSON.parse(localStorage.getItem("neonSkills") || "[]");
+      function saveSkills() {
+        localStorage.setItem("neonSkills", JSON.stringify(ownedSkills));
+      }
+
+      function renderSkills() {
+        const grid = document.getElementById("skillGrid");
+        grid.innerHTML = "";
+
+        SKILL_ITEMS.forEach((sk) => {
+          const owned = ownedSkills.includes(sk.id);
+          const reqMet = !sk.req || ownedSkills.includes(sk.req);
+          const locked = !reqMet && !owned;
+          const card = document.createElement("div");
+          card.className = "item-card" + (locked ? " locked" : "");
+          card.innerHTML = `
+      ${sk.badge && !owned ? `<div class="item-badge" style="background:#9900ff;font-size:8px">${sk.badge}</div>` : ""}
+      <div class="item-icon" style="opacity:${locked ? "0.4" : "1"}">${sk.icon}</div>
+      <div class="item-name" style="color:${locked ? "#555" : "#ffd700"}">${sk.name}</div>
+      <div class="item-desc">${sk.desc.replace(/\n/g, "<br>")}</div>
+      ${
+        owned
+          ? `<div class="item-owned">✔ UNLOCKED</div>`
+          : locked
+            ? `<div style="font-size:9px;color:#555;letter-spacing:1px">🔒 LOCKED</div>`
+            : `<div class="item-cost">🪙 ${sk.cost}</div>`
+      }
+    `;
+          if (!owned && !locked) {
+            card.addEventListener("click", () => {
+              if (coinStash < sk.cost) {
+                card.style.borderColor = "#f60";
+                setTimeout(() => (card.style.borderColor = ""), 600);
+                return;
+              }
+              coinStash -= sk.cost;
+              saveCoinStash();
+              updateCoinUI();
+              ownedSkills.push(sk.id);
+              saveSkills();
+              applySkills();
+              renderSkills();
+            });
+          }
+          grid.appendChild(card);
+        });
+      }
+
+      // ── Apply owned skills to game ────────────────────────────────────────────────
+      function applySkills() {
+        // High jump
+        if (ownedSkills.includes("sk_highjump")) {
+          window._skillJumpBoost = 0.2; // applied in P.jump()
+        }
+        // Speed boost
+        window._skillSpeedBoost = ownedSkills.includes("sk_speedboost")
+          ? 0.5
+          : 0;
+        // Coin luck
+        window._skillCoinChance = ownedSkills.includes("sk_coinluck")
+          ? 0.35
+          : 0.2;
+        // Enemy HP reduction
+        window._skillEnemyHP = ownedSkills.includes("sk_enemyhp") ? 3 : 5;
+        // Auto aim
+        window._skillAutoAim = ownedSkills.includes("sk_autoaim");
+      }
+      applySkills();
 
       // Spawn a coin at the centre of a platform (20% chance)
       function maybeSpawnCoin(p) {
-        if (Math.random() > 0.2) return;
+        if (Math.random() > (window._skillCoinChance || 0.2)) return;
         coins.push({
+          plat: p, // keep reference to platform
           wx: p.x + p.w / 2,
-          wy: p.y - 10,
+          wy: p.y - 12,
           r: 7,
           angle: 0,
           collected: false,
@@ -1242,10 +1807,20 @@
       }
 
       function updateCoins() {
-        // Collect coins player touches
+        // Remove coins whose platform has been pruned from the world
+        coins = coins.filter(
+          (c) => !c.collected && (!c.plat || platforms.includes(c.plat)),
+        );
+
         coins.forEach((c) => {
-          if (c.collected) return;
+          // Stay anchored to platform centre every frame
+          if (c.plat) {
+            c.wx = c.plat.x + c.plat.w / 2;
+            c.wy = c.plat.y - 12;
+          }
           c.angle += 0.06;
+
+          // Collect on player touch
           const dx = P.x + P.w / 2 - c.wx;
           const dy = P.y + P.h / 2 - c.wy;
           if (Math.sqrt(dx * dx + dy * dy) < c.r + 14) {
@@ -1737,7 +2312,7 @@
           wy: camY + H * 0.3,
           w: 40,
           h: 28,
-          hp: ENEMY_HP,
+          hp: window._skillEnemyHP || ENEMY_HP,
           vx: -1.5,
           vy: 0,
           fireTimer: 60,
