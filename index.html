@@ -190,20 +190,82 @@
       <div class="stat" style="text-align: center">
         JUMPS<span id="jumpDisplay">2</span>
       </div>
+      <div class="stat" style="text-align: center">
+        🪙<span id="coinDisplay">0</span>
+      </div>
       <div class="stat" style="text-align: right">
         <span id="bestLabel">BEST</span><span id="bestDisplay">0</span>
       </div>
     </div>
-    <canvas id="c"></canvas>
+
+    <!-- User badge top-right -->
     <div
+      id="userBadge"
       style="
         position: absolute;
-        bottom: 22px;
+        top: 12px;
+        right: 12px;
+        z-index: 30;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 0, 20, 0.7);
+        border: 1px solid #0ff3;
+        padding: 5px 12px 5px 6px;
+        border-radius: 30px;
+        font-family: &quot;Share Tech Mono&quot;, monospace;
+        font-size: 11px;
+        color: #0ff;
+        letter-spacing: 1px;
+        pointer-events: all;
+      "
+    >
+      <img
+        id="userAvatar"
+        src=""
+        width="26"
+        height="26"
+        style="border-radius: 50%; border: 1px solid #0ff5; object-fit: cover"
+      />
+      <span id="userName"></span>
+      <button
+        id="signOutBtn"
+        style="
+          font-family: &quot;Share Tech Mono&quot;, monospace;
+          font-size: 10px;
+          color: #f60;
+          background: transparent;
+          border: 1px solid #f603;
+          padding: 2px 6px;
+          cursor: pointer;
+          border-radius: 3px;
+          letter-spacing: 1px;
+          margin-left: 4px;
+          pointer-events: all;
+        "
+      >
+        OUT
+      </button>
+    </div>
+    <canvas id="c"></canvas>
+
+    <!-- ── Autopilot Panel ── -->
+    <div
+      id="apPanel"
+      style="
+        display: none;
+        position: absolute;
+        bottom: 18px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 10;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
       "
     >
+      <!-- Main toggle button -->
       <button
         id="apBtn"
         style="
@@ -222,11 +284,185 @@
             0 0 40px #0ff;
           transition: all 0.2s;
           text-transform: uppercase;
-          display: none;
         "
       >
         ⚡ AUTO PILOT
       </button>
+
+      <!-- Checkbox panel — shown when autopilot is ON -->
+      <div
+        id="apOptions"
+        style="
+          display: none;
+          background: rgba(0, 0, 20, 0.88);
+          border: 1px solid #0ff3;
+          padding: 10px 18px;
+          border-radius: 6px;
+          box-shadow: 0 0 16px #0ff3;
+          font-family: &quot;Share Tech Mono&quot;, monospace;
+          font-size: 12px;
+          color: #0ff;
+          letter-spacing: 1px;
+          display: none;
+          flex-direction: column;
+          gap: 7px;
+          min-width: 180px;
+        "
+      >
+        <div
+          style="
+            font-size: 10px;
+            opacity: 0.5;
+            letter-spacing: 3px;
+            margin-bottom: 2px;
+          "
+        >
+          MODULES
+        </div>
+
+        <label
+          id="apJumpLabel"
+          style="display: flex; align-items: center; gap: 8px; cursor: pointer"
+        >
+          <input
+            type="checkbox"
+            id="apJumpCb"
+            checked
+            style="accent-color: #0ff; width: 14px; height: 14px"
+          />
+          <span>AUTO JUMP</span>
+        </label>
+
+        <label
+          id="apFightLabel"
+          style="display: flex; align-items: center; gap: 8px; cursor: pointer"
+        >
+          <input
+            type="checkbox"
+            id="apFightCb"
+            checked
+            style="accent-color: #ff0080; width: 14px; height: 14px"
+          />
+          <span style="color: #ff0080">AUTO FIGHT</span>
+        </label>
+
+        <!-- ── Speed Control ── -->
+        <div
+          style="border-top: 1px solid #0ff2; margin-top: 4px; padding-top: 8px"
+        >
+          <div
+            style="
+              font-size: 10px;
+              opacity: 0.5;
+              letter-spacing: 3px;
+              margin-bottom: 6px;
+            "
+          >
+            SPEED
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px">
+            <button
+              id="apSpeedDown"
+              style="
+                font-family: &quot;Orbitron&quot;, monospace;
+                font-size: 14px;
+                font-weight: 700;
+                width: 28px;
+                height: 28px;
+                background: transparent;
+                border: 1px solid #0ff5;
+                color: #0ff;
+                cursor: pointer;
+                border-radius: 3px;
+                line-height: 1;
+                transition:
+                  border-color 0.15s,
+                  box-shadow 0.15s;
+              "
+            >
+              −
+            </button>
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2px;
+                flex: 1;
+              "
+            >
+              <span
+                id="apSpeedVal"
+                style="
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: #fff;
+                  text-shadow: 0 0 10px #0ff;
+                  min-width: 36px;
+                  text-align: center;
+                "
+                >1.0x</span
+              >
+              <!-- Mini bar -->
+              <div
+                style="
+                  width: 100%;
+                  height: 4px;
+                  background: #0ff1;
+                  border-radius: 2px;
+                  overflow: hidden;
+                "
+              >
+                <div
+                  id="apSpeedBar"
+                  style="
+                    height: 100%;
+                    width: 0%;
+                    background: #0ff;
+                    box-shadow: 0 0 6px #0ff;
+                    transition: width 0.15s;
+                    border-radius: 2px;
+                  "
+                ></div>
+              </div>
+            </div>
+            <button
+              id="apSpeedUp"
+              style="
+                font-family: &quot;Orbitron&quot;, monospace;
+                font-size: 14px;
+                font-weight: 700;
+                width: 28px;
+                height: 28px;
+                background: transparent;
+                border: 1px solid #0ff5;
+                color: #0ff;
+                cursor: pointer;
+                border-radius: 3px;
+                line-height: 1;
+                transition:
+                  border-color 0.15s,
+                  box-shadow 0.15s;
+              "
+            >
+              +
+            </button>
+          </div>
+          <div
+            style="
+              font-size: 9px;
+              opacity: 0.4;
+              margin-top: 4px;
+              text-align: center;
+            "
+          >
+            1x — 8x
+          </div>
+        </div>
+
+        <!-- Future modules go here — just add more <label> rows or sections -->
+        <!-- e.g. AUTO DODGE, AUTO COLLECT, BOSS STRATEGY, etc. -->
+      </div>
     </div>
 
     <div id="overlay">
@@ -241,6 +477,239 @@
       <button id="resetBtn">⟳ RESET BEST</button>
     </div>
 
+    <!-- ── Firebase ── -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+      import {
+        getAuth,
+        GoogleAuthProvider,
+        signInWithPopup,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAkUfCHvEyOKRNkBy9_yIKCK-6roa61bZ0",
+        authDomain: "neon-parkour.firebaseapp.com",
+        projectId: "neon-parkour",
+        storageBucket: "neon-parkour.firebasestorage.app",
+        messagingSenderId: "584282364800",
+        appId: "1:584282364800:web:b10cead05e8cab97487f65",
+        measurementId: "G-K4BV8YCH90",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const provider = new GoogleAuthProvider();
+
+      // ── Expose to main game script via window ─────────────────────────────────────
+      window._fbAuth = auth;
+      window._fbDb = db;
+      window._fbDoc = doc;
+      window._fbGetDoc = getDoc;
+      window._fbSetDoc = setDoc;
+      window._fbProvider = provider;
+      window._fbSignIn = () => signInWithPopup(auth, provider);
+      window._fbSignOut = () => signOut(auth);
+
+      // ── Auth state changes ────────────────────────────────────────────────────────
+      onAuthStateChanged(auth, (user) => {
+        // Fire a custom event that the main script listens to
+        window.dispatchEvent(new CustomEvent("fbAuthChange", { detail: user }));
+      });
+    </script>
+
+    <!-- ── Login UI (shown before game loads) ── -->
+    <div
+      id="loginScreen"
+      style="
+        position: fixed;
+        inset: 0;
+        background: #000010;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        font-family: &quot;Orbitron&quot;, monospace;
+      "
+    >
+      <div
+        style="
+          font-size: clamp(32px, 7vw, 64px);
+          font-weight: 900;
+          letter-spacing: 8px;
+          color: #fff;
+          text-shadow:
+            0 0 20px #0ff,
+            0 0 60px #0ff;
+          margin-bottom: 8px;
+        "
+      >
+        NEON PARKOUR
+      </div>
+      <div
+        style="
+          font-family: &quot;Share Tech Mono&quot;, monospace;
+          font-size: 13px;
+          color: #0ff;
+          letter-spacing: 4px;
+          opacity: 0.7;
+          margin-bottom: 48px;
+        "
+      >
+        SIGN IN TO SAVE YOUR PROGRESS
+      </div>
+
+      <button
+        id="googleSignInBtn"
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          font-family: &quot;Orbitron&quot;, monospace;
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: 2px;
+          color: #000;
+          background: #0ff;
+          border: none;
+          padding: 14px 32px;
+          cursor: pointer;
+          clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+          box-shadow:
+            0 0 30px #0ff,
+            0 0 60px #0ff;
+          transition: all 0.2s;
+          text-transform: uppercase;
+        "
+      >
+        <svg width="20" height="20" viewBox="0 0 48 48">
+          <path
+            fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+          />
+          <path
+            fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+          />
+          <path
+            fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+          />
+          <path fill="none" d="M0 0h48v48H0z" />
+        </svg>
+        SIGN IN WITH GOOGLE
+      </button>
+
+      <div
+        style="
+          font-family: &quot;Share Tech Mono&quot;, monospace;
+          font-size: 11px;
+          color: #0ff5;
+          margin-top: 20px;
+          letter-spacing: 2px;
+        "
+      >
+        YOUR SCORE · BEST · COINS SYNC TO THE CLOUD
+      </div>
+
+      <!-- Divider -->
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-top: 28px;
+          width: 280px;
+        "
+      >
+        <div style="flex: 1; height: 1px; background: #0ff2"></div>
+        <span
+          style="
+            font-family: &quot;Share Tech Mono&quot;, monospace;
+            font-size: 10px;
+            color: #0ff4;
+            letter-spacing: 2px;
+          "
+          >OR</span
+        >
+        <div style="flex: 1; height: 1px; background: #0ff2"></div>
+      </div>
+
+      <!-- Guest button -->
+      <button
+        id="guestBtn"
+        style="
+          margin-top: 16px;
+          font-family: &quot;Orbitron&quot;, monospace;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 3px;
+          color: #ff6600;
+          background: transparent;
+          border: 1px solid #ff6600;
+          padding: 11px 28px;
+          cursor: pointer;
+          text-transform: uppercase;
+          clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+          transition: all 0.2s;
+          opacity: 0.75;
+        "
+        onmouseover="
+          this.style.opacity = '1';
+          this.style.boxShadow = '0 0 16px #ff6600';
+        "
+        onmouseout="
+          this.style.opacity = '0.75';
+          this.style.boxShadow = 'none';
+        "
+      >
+        ⚠ PLAY AS GUEST
+      </button>
+
+      <!-- Warning text under guest -->
+      <div
+        style="
+          font-family: &quot;Share Tech Mono&quot;, monospace;
+          font-size: 10px;
+          color: #ff6600;
+          margin-top: 10px;
+          letter-spacing: 1px;
+          opacity: 0.6;
+          text-align: center;
+          max-width: 280px;
+          line-height: 1.6;
+        "
+      >
+        ⚠ PROGRESS IS SAVED LOCALLY ONLY<br />
+        CLEARING BROWSER DATA WILL WIPE YOUR SAVE
+      </div>
+
+      <div
+        id="loginError"
+        style="
+          font-family: &quot;Share Tech Mono&quot;, monospace;
+          font-size: 12px;
+          color: #f60;
+          margin-top: 16px;
+          letter-spacing: 1px;
+          display: none;
+        "
+      ></div>
+    </div>
+
     <script>
       const canvas = document.getElementById("c");
       const ctx = canvas.getContext("2d");
@@ -252,17 +721,201 @@
       const bestDisplay = document.getElementById("bestDisplay");
       const bestLabel = document.getElementById("bestLabel");
       const resetBtn = document.getElementById("resetBtn");
+      const apPanel = document.getElementById("apPanel");
       const apBtn = document.getElementById("apBtn");
+      const apOptions = document.getElementById("apOptions");
+      const apJumpCb = document.getElementById("apJumpCb");
+      const apFightCb = document.getElementById("apFightCb");
+      const apSpeedUp = document.getElementById("apSpeedUp");
+      const apSpeedDown = document.getElementById("apSpeedDown");
+      const apSpeedVal = document.getElementById("apSpeedVal");
+      const apSpeedBar = document.getElementById("apSpeedBar");
+
+      // Convenience getters — read live from checkboxes
+      const apJumpOn = () => apJumpCb.checked;
+      const apFightOn = () => apFightCb.checked;
+
+      // ── Speed multiplier ──────────────────────────────────────────────────────────
+      // Applies to run speed and rail arc duration
+      // Range: 1x – 8x in 0.5 steps
+      let apSpeedMult = 1.0;
+      const AP_SPEED_MIN = 1.0;
+      const AP_SPEED_MAX = 8.0;
+      const AP_SPEED_STEP = 0.5;
+
+      function updateSpeedUI() {
+        apSpeedVal.textContent = apSpeedMult.toFixed(1) + "x";
+        const pct =
+          ((apSpeedMult - AP_SPEED_MIN) / (AP_SPEED_MAX - AP_SPEED_MIN)) * 100;
+        apSpeedBar.style.width = pct + "%";
+        // Colour shifts cyan → yellow → red as speed increases
+        const col =
+          apSpeedMult <= 3 ? "#0ff" : apSpeedMult <= 6 ? "#ff0" : "#f60";
+        apSpeedBar.style.background = col;
+        apSpeedBar.style.boxShadow = `0 0 6px ${col}`;
+        apSpeedVal.style.textShadow = `0 0 10px ${col}`;
+        apSpeedVal.style.color = col;
+      }
+
+      apSpeedUp.addEventListener("click", () => {
+        apSpeedMult = Math.min(
+          AP_SPEED_MAX,
+          Math.round((apSpeedMult + AP_SPEED_STEP) * 10) / 10,
+        );
+        updateSpeedUI();
+      });
+      apSpeedDown.addEventListener("click", () => {
+        apSpeedMult = Math.max(
+          AP_SPEED_MIN,
+          Math.round((apSpeedMult - AP_SPEED_STEP) * 10) / 10,
+        );
+        updateSpeedUI();
+      });
+
       apBtn.addEventListener("click", toggleAutoPilot);
       document.addEventListener("keydown", (e) => {
         if (e.code === "KeyP") toggleAutoPilot();
       });
 
+      // ── Firebase cloud save ───────────────────────────────────────────────────────
+      let currentUser = null;
+
+      async function loadCloudData() {
+        if (!currentUser) return;
+        try {
+          const snap = await window._fbGetDoc(
+            window._fbDoc(window._fbDb, "players", currentUser.uid),
+          );
+          if (snap.exists()) {
+            const d = snap.data();
+            best = d.best || 0;
+            coinStash = d.coins || 0;
+          }
+        } catch (e) {
+          console.warn("Cloud load failed, using local", e);
+        }
+        updateBestUI(false);
+        updateCoinUI();
+      }
+
+      async function saveCloudData() {
+        if (!currentUser) return;
+        try {
+          await window._fbSetDoc(
+            window._fbDoc(window._fbDb, "players", currentUser.uid),
+            {
+              best,
+              coins: coinStash,
+              uid: currentUser.uid,
+              name: currentUser.displayName,
+              updatedAt: Date.now(),
+            },
+            { merge: true },
+          );
+        } catch (e) {
+          console.warn("Cloud save failed", e);
+        }
+      }
+
+      // Listen for auth state changes from the Firebase module
+      window.addEventListener("fbAuthChange", async (e) => {
+        const user = e.detail;
+        currentUser = user;
+        if (user) {
+          // Hide login screen, show game
+          document.getElementById("loginScreen").style.display = "none";
+          // Update user badge
+          document.getElementById("userAvatar").src = user.photoURL || "";
+          document.getElementById("userName").textContent =
+            user.displayName || user.email;
+          document.getElementById("userName").style.color = "#0ff";
+          document.getElementById("userAvatar").style.display = "block";
+          document.getElementById("userBadge").style.display = "none"; // shown only on death
+          // Load cloud data
+          await loadCloudData();
+          // Start the game loop if not running
+          if (!window._loopStarted) {
+            window._loopStarted = true;
+            buildWorld();
+            buildGradients();
+            P.reset();
+            updateBestUI(false);
+            updateCoinUI();
+            loop();
+          }
+        } else {
+          document.getElementById("loginScreen").style.display = "flex";
+          document.getElementById("userBadge").style.display = "none";
+        }
+      });
+
+      // Sign-in button
+      document
+        .getElementById("googleSignInBtn")
+        .addEventListener("click", async () => {
+          const errEl = document.getElementById("loginError");
+          try {
+            errEl.style.display = "none";
+            await window._fbSignIn();
+          } catch (err) {
+            errEl.style.display = "block";
+            errEl.textContent = "Sign-in failed: " + (err.message || err.code);
+          }
+        });
+
+      // Guest mode — skip Firebase, use localStorage only
+      document.getElementById("guestBtn").addEventListener("click", () => {
+        currentUser = null; // no cloud save
+        // Load from localStorage
+        best = parseInt(localStorage.getItem("neonParkourBest") || "0");
+        coinStash = parseInt(localStorage.getItem("neonCoinStash") || "0");
+        // Hide login, set up guest badge (hidden during play, shown on death)
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("userAvatar").style.display = "none";
+        document.getElementById("userName").textContent = "👤 GUEST";
+        document.getElementById("userName").style.color = "#ff6600";
+        document.getElementById("userBadge").style.display = "none"; // hidden until death
+        // Start game
+        if (!window._loopStarted) {
+          window._loopStarted = true;
+          buildWorld();
+          buildGradients();
+          P.reset();
+          updateBestUI(false);
+          updateCoinUI();
+          loop();
+        }
+      });
+
+      // ── Sign out (works for both Google and Guest) ────────────────────────────────
+      function doSignOut() {
+        // Reset game state fully
+        window._loopStarted = false;
+        state = "menu";
+        // Hide badge, show login screen
+        document.getElementById("userBadge").style.display = "none";
+        document.getElementById("loginScreen").style.display = "flex";
+        document.getElementById("loginError").style.display = "none";
+        // Reset best/coins display
+        best = 0;
+        coinStash = 0;
+        updateBestUI(false);
+        updateCoinUI();
+        // Sign out from Firebase if logged in
+        if (window._fbSignOut) window._fbSignOut().catch(() => {});
+        currentUser = null;
+      }
+
+      document
+        .getElementById("signOutBtn")
+        .addEventListener("click", doSignOut);
+
       // ── Persistent best ───────────────────────────────────────────────────────────
-      let best = parseInt(localStorage.getItem("neonParkourBest") || "0");
+      let best = 0;
       function saveBest(v) {
         best = v;
         localStorage.setItem("neonParkourBest", v);
+        if (currentUser) saveCloudData();
       }
       function updateBestUI(isNew) {
         bestDisplay.textContent = best;
@@ -340,7 +993,9 @@
           const nw =
             PLT_MIN_W +
             Math.random() * (PLT_MAX_W - PLT_MIN_W - Math.min(score, 60));
-          platforms.push({ x: nx, y: ny, w: Math.max(50, nw), h: PLT_H });
+          const plat = { x: nx, y: ny, w: Math.max(50, nw), h: PLT_H };
+          platforms.push(plat);
+          maybeSpawnCoin(plat);
           worldRight = nx + Math.max(50, nw);
         }
         // Prune old platforms
@@ -385,7 +1040,8 @@
 
         update() {
           // Auto-run forward (disabled in autopilot — platforms move instead)
-          const runSpeed = 4.5 + Math.min(score * 0.03, 5);
+          const runSpeed =
+            (4.5 + Math.min(score * 0.03, 5)) * (autoPilot ? apSpeedMult : 1);
           this.vx = runSpeed;
 
           this.vy = Math.min(this.vy + GRAVITY, 22); // cap fall speed
@@ -551,7 +1207,144 @@
         ctx.restore();
       }
 
-      // ── Arena state machine ───────────────────────────────────────────────────────
+      // ── Coin system ───────────────────────────────────────────────────────────────
+      let coins = []; // world coins on platforms
+      let coinStash = parseInt(localStorage.getItem("neonCoinStash") || "0");
+      let coinPopups = []; // floating "+N" text popups
+
+      function saveCoinStash() {
+        localStorage.setItem("neonCoinStash", coinStash);
+        if (currentUser) saveCloudData();
+      }
+
+      function addCoins(n, wx, wy) {
+        coinStash += n;
+        saveCoinStash();
+        coinPopups.push({ wx, wy, n, life: 1, vy: -1.5 });
+        updateCoinUI();
+      }
+
+      function updateCoinUI() {
+        document.getElementById("coinDisplay").textContent = coinStash;
+      }
+
+      // Spawn a coin at the centre of a platform (20% chance)
+      function maybeSpawnCoin(p) {
+        if (Math.random() > 0.2) return;
+        coins.push({
+          wx: p.x + p.w / 2,
+          wy: p.y - 10,
+          r: 7,
+          angle: 0,
+          collected: false,
+          bobOffset: Math.random() * Math.PI * 2,
+        });
+      }
+
+      function updateCoins() {
+        // Collect coins player touches
+        coins.forEach((c) => {
+          if (c.collected) return;
+          c.angle += 0.06;
+          const dx = P.x + P.w / 2 - c.wx;
+          const dy = P.y + P.h / 2 - c.wy;
+          if (Math.sqrt(dx * dx + dy * dy) < c.r + 14) {
+            c.collected = true;
+            addCoins(1, c.wx, c.wy);
+            spawnCoinFX(c.wx, c.wy);
+          }
+        });
+        coins = coins.filter((c) => !c.collected);
+
+        // Coin popups float up and fade
+        coinPopups.forEach((p) => {
+          p.wy += p.vy;
+          p.life -= 0.022;
+        });
+        coinPopups = coinPopups.filter((p) => p.life > 0);
+      }
+
+      function spawnCoinFX(wx, wy) {
+        for (let i = 0; i < 6; i++) {
+          particles.push({
+            wx,
+            wy,
+            vx: (Math.random() - 0.5) * 5,
+            vy: Math.random() * -4,
+            life: 1,
+            decay: 0.08 + Math.random() * 0.05,
+            col: "#ffd700",
+            sz: 2 + Math.random() * 3,
+          });
+        }
+      }
+
+      // Drop 1–3 coins at enemy death position
+      function dropEnemyCoins(wx, wy) {
+        const n = 1 + Math.floor(Math.random() * 3);
+        addCoins(n, wx, wy);
+        // Scatter coin particles
+        for (let i = 0; i < n; i++) {
+          const angle = (i / n) * Math.PI * 2;
+          setTimeout(
+            () =>
+              spawnCoinFX(wx + Math.cos(angle) * 20, wy + Math.sin(angle) * 20),
+            i * 80,
+          );
+        }
+      }
+
+      function drawCoins() {
+        const t = frame * 0.05;
+        coins.forEach((c) => {
+          const sx = c.wx - camX;
+          const sy = c.wy - camY + Math.sin(t + c.bobOffset) * 4; // bob up/down
+          if (sx < -20 || sx > W + 20 || sy < -20 || sy > H + 20) return;
+
+          ctx.save();
+          ctx.shadowBlur = 14;
+          ctx.shadowColor = "#ffd700";
+
+          // Coin body — squish horizontally to simulate spin
+          const squeeze = Math.abs(Math.sin(c.angle * 2));
+          ctx.beginPath();
+          ctx.ellipse(sx, sy, c.r * squeeze + 1, c.r, 0, 0, Math.PI * 2);
+          ctx.fillStyle = "#ffd700";
+          ctx.fill();
+
+          // Inner shine
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#fff9";
+          ctx.beginPath();
+          ctx.ellipse(
+            sx - 1,
+            sy - 1,
+            (c.r * squeeze + 1) * 0.4,
+            c.r * 0.4,
+            0,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Floating "+N" popups
+        coinPopups.forEach((p) => {
+          const sx = p.wx - camX,
+            sy = p.wy - camY;
+          ctx.save();
+          ctx.globalAlpha = p.life;
+          ctx.font = "bold 14px Orbitron, monospace";
+          ctx.fillStyle = "#ffd700";
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = "#ffd700";
+          ctx.textAlign = "center";
+          ctx.fillText(`+${p.n}`, sx, sy);
+          ctx.restore();
+        });
+      }
+
       // states: 'playing' | 'arena_expand' | 'arena_fight' | 'arena_shrink' | 'arena_resume'
       let arenaPlatform = null; // the single arena floor
       let arenaTargetW = 0; // full screen width target during expand
@@ -1002,7 +1795,12 @@
             }
           });
         });
+        const before = enemies.length;
         enemies = enemies.filter((e) => e.hp > 0);
+        // Drop coins for each killed enemy
+        if (before > enemies.length) {
+          dropEnemyCoins(camX + W * 0.6, camY + H * 0.4);
+        }
       }
 
       function drawEnemies() {
@@ -1326,6 +2124,8 @@
         enemies = [];
         bullets = [];
         eBullets = [];
+        coins = [];
+        coinPopups = [];
         enemySpawnLock = false;
         nextFightAt = ENEMY_THRESHOLD;
         shootCooldown = 0;
@@ -1341,10 +2141,14 @@
         camX = P.x - W * 0.28;
         camY = P.y - H * 0.42;
         overlay.classList.add("hidden");
-        apBtn.style.display = "block";
+        document.getElementById("userBadge").style.display = "none"; // hidden during gameplay
+        apPanel.style.display = "flex";
+        apOptions.style.display = "none";
         autoPilot = false;
         railReset();
         P.maxJumps = 2;
+        apSpeedMult = 1.0;
+        updateSpeedUI();
         apBtn.textContent = "⚡ AUTO PILOT";
         apBtn.style.background = "#0ff";
         apBtn.style.boxShadow = "0 0 20px #0ff,0 0 40px #0ff";
@@ -1365,7 +2169,9 @@
         autoPilot = false;
         railReset();
         P.maxJumps = 2;
-        apBtn.style.display = "none";
+        apPanel.style.display = "none";
+        // Show user badge on death screen so OUT button is accessible
+        document.getElementById("userBadge").style.display = "flex";
         const isNew = score > best;
         if (isNew) saveBest(score);
         updateBestUI(isNew);
@@ -1419,7 +2225,7 @@
       }
 
       function railStartArc(cur, next) {
-        const runSpeed = 4.5 + Math.min(score * 0.03, 5);
+        const runSpeed = (4.5 + Math.min(score * 0.03, 5)) * apSpeedMult;
         // From: centre of current platform top
         rail.fromX = cur.x + cur.w / 2 - P.w / 2;
         rail.fromY = cur.y - P.h;
@@ -1428,7 +2234,7 @@
         rail.toY = next.y - P.h;
         // Duration: how long it would take to cross at run speed
         const dist = Math.abs(rail.toX - rail.fromX);
-        rail.duration = Math.max(20, Math.round(dist / runSpeed));
+        rail.duration = Math.max(12, Math.round((dist / runSpeed) * 0.6));
         // Arc height: enough to clear the gap, scales with height difference
         const heightDiff = rail.fromY - rail.toY; // positive = going up
         rail.arcH = Math.max(60, dist * 0.3 + Math.max(0, heightDiff) + 40);
@@ -1460,8 +2266,9 @@
           const next = railFindNext(cur);
           if (!next) return;
 
-          // Glue to current platform while waiting
-          P.x += 4.5 + Math.min(score * 0.03, 5); // keep moving forward on platform
+          const runSpeed = (4.5 + Math.min(score * 0.03, 5)) * apSpeedMult;
+          // Move forward every frame on platform
+          P.x += runSpeed;
           P.y = cur.y - P.h;
           P.onGround = true;
           P.vy = 0;
@@ -1473,9 +2280,9 @@
             score++;
           }
 
-          // Launch arc when player reaches 60% across the platform
+          // Launch arc when player reaches 30% across the platform
           const progress = (P.x - cur.x) / cur.w;
-          if (progress >= 0.6) {
+          if (progress >= 0.3) {
             railStartArc(cur, next);
           }
           return;
@@ -1558,6 +2365,7 @@
           ? "0 0 20px #ff0080,0 0 40px #ff0080"
           : "0 0 20px #0ff,0 0 40px #0ff";
         apBtn.style.color = "#000";
+        apOptions.style.display = autoPilot ? "flex" : "none";
       }
 
       // ── Main loop ─────────────────────────────────────────────────────────────────
@@ -1581,7 +2389,8 @@
         if (state === "playing") {
           generatePlatforms();
           if (autoPilot) {
-            updateRail();
+            if (apJumpOn()) updateRail();
+            else P.update();
           } else {
             P.update();
           }
@@ -1591,6 +2400,7 @@
           updateBullets();
           updateEBullets();
           updateEnemies();
+          updateCoins();
 
           // Score = platforms player has landed on (not just passed)
           if (P.onGround) {
@@ -1616,6 +2426,7 @@
 
           drawVoidFog();
           drawPlatforms();
+          drawCoins();
           drawEnemies();
           drawBullets();
           drawEBullets();
@@ -1640,7 +2451,7 @@
           drawArenaMsg();
           scoreDisplay.textContent = score;
         } else if (state === "arena_fight") {
-          if (autoPilot) updateAutoFight();
+          if (autoPilot && apFightOn()) updateAutoFight();
           updateArenaFight();
           updateCamera();
           updateParticles();
@@ -1759,36 +2570,10 @@
       startBtn.addEventListener("click", startGame);
 
       // ── Boot ──────────────────────────────────────────────────────────────────────
-      buildWorld();
-      buildGradients();
-      P.reset();
-      updateBestUI(false);
-      loop();
-    </script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-      import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
-
-      // 👉 ADD THIS LINE (Firestore)
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyAkUfCHvEyOKRNkBy9_yIKCK-6roa61bZ0",
-        authDomain: "neon-parkour.firebaseapp.com",
-        projectId: "neon-parkour",
-        storageBucket: "neon-parkour.firebasestorage.app",
-        messagingSenderId: "584282364800",
-        appId: "1:584282364800:web:b10cead05e8cab97487f65",
-        measurementId: "G-K4BV8YCH90",
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const analytics = getAnalytics(app);
-
-      // 👉 ADD THIS LINE (connect database)
-      const db = getFirestore(app);
-
-      console.log("Firebase + Firestore connected");
+      // Game starts only after Firebase auth confirms a logged-in user.
+      // The fbAuthChange event triggers buildWorld + loop() above.
+      // Fallback: if Firebase module hasn't loaded yet, wait for it.
+      window._loopStarted = false;
     </script>
   </body>
 </html>
